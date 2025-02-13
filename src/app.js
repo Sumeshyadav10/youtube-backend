@@ -18,3 +18,10 @@ app.use(express.static('public')); // This is a built-in middleware function in 
 
 // Middleware to parse cookies
 app.use(cookieParser()); // This is a third-party middleware function in Express. It parses cookies attached to the client request object.
+
+const  userRouter = require('./routes/user.router')   
+
+app.use('/user', userRouter);    // Mount the user router at the /user endpoint
+
+
+module.exports = app;    // Export the app
