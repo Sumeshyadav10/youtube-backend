@@ -1,6 +1,7 @@
 const cookieParser = require('cookie-parser')
 const Cors = require('cors')
 const express = require('express')
+const fileUpload = require('express-fileupload');
 
 const app = express()
 
@@ -18,6 +19,13 @@ app.use(express.static('public')); // This is a built-in middleware function in 
 
 // Middleware to parse cookies
 app.use(cookieParser()); // This is a third-party middleware function in Express. It parses cookies attached to the client request object.
+
+app.use(fileUpload({
+  useTempFiles: true,
+  tempFileDir: '/tmp/',
+  limits: { fileSize: 50 * 1024 * 1024 }, // Optional: limit file size to 50MB
+  abortOnLimit: true, // Optional: return 413 when file size is exceeded
+}));
 
 const  userRouter = require('./routes/user.router')   
 

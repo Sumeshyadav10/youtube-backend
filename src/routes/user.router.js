@@ -3,19 +3,21 @@ const registerUser = require('../controllers/user.controller');
 const upload = require('../middlewares/multer.middleware');
 
 
-router.post('/register',upload.fields
-(
-    [
-        {
-            name:'avatar',
-            maxCount:1
-        },
-        {
-            name:'cover images',
-            maxCount:5
-        }
-    ]   
-), registerUser);    // Route to register a user
+// router.post('/register',upload.fields
+// (
+//     [
+//         {
+//             name:'avatar',
+//             maxCount:1
+//         },
+//         {
+//             name:'cover images',
+//             maxCount:5
+//         }
+//     ]   
+// ), registerUser);    // Route to register a user
+
+router.post('/register',registerUser);    // Route to register a user
 
 
 

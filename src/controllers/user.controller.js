@@ -5,63 +5,53 @@ const uploadOnCloudinary = require('../utils/cloudinary');
 const ApiResponse = require('../utils/apiResponse');
 
 const registerUser = asynchandler(async (req, res) => { 
-    // Code to register a user
-    // collect the information from user
-    // validation -- not empty
-    // check already exist
-    // check required details schema
-    // upload to cloudinary(avatar)
-    // create a new user
-    // save the user to the database
-    // send a response to the user
-    const { username, email, password,fullname } = req.body;
-    console.log(email);
+    const { username, email, password, fullname } = req.body;
+    console.log(req.files);
 
     if ([username, email, password].includes(undefined)) {
         throw new apiError(400, 'Please provide all the required details');
     }
 
-  const existedUser =  User.findOne({
-        $or: [{ email: email },
-            { username: username } ]      
-    });
+    const existedUser = await User.findOne({
+        $or: [{ email: email }, { username: username }]
+    }).lean();
 
     if (existedUser) {
         throw new apiError(409, 'User already exists');
     }
 
-    const avatarLocalPath = req.files?.avatar ? req.files.avatar[0].path : null;
-    const coverImageLocalPath = req.files?.coverImage ? req.files.coverImage[0].path : null;
+    const avatarLocalPath = req.files?.avatar ? req.files.avatar.tempFilePath : null;
+    const coverImageLocalPath = req.files?.coverImage ? req.files.coverImage.tempFilePath : null;
 
     if (!avatarLocalPath) {
         throw new apiError(400, 'Please provide an avatar');
     }
 
     const avatar = await uploadOnCloudinary(avatarLocalPath);
+    console.log("avatar", avatar);
     const coverImage = coverImageLocalPath ? await uploadOnCloudinary(coverImageLocalPath) : null;
 
-    if(!avatar){
+    if (!avatar) {
+        
         throw new apiError(500, 'Failed to upload avatar');
     }
 
     const user = await User.create({
-        username : username.tolowerCase(),
+        username: username.toLowerCase(),
         fullname,
         email,
         password,
         avatar: avatar.url,
         coverImage: coverImage?.url || null
-    })
+    });
 
-    const createduser = user.findbyId(user._id).select(
-        '-password -refresh_token'
-    );
-    if(!createduser){
+    const createdUser = await User.findById(user._id).select('-password -refresh_token').lean();
+
+    if (!createdUser) {
         throw new apiError(500, 'Failed to create user');
     }
-    return  res.status(201).json(new ApiResponse(201, 'User registered successfully', createduser));
 
-
+    return res.status(201).json(new ApiResponse(201, 'User registered successfully', createdUser));
 });
 
 module.exports = registerUser;
