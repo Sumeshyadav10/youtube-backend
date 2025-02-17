@@ -25,7 +25,7 @@ app.use(fileUpload({
   tempFileDir: '/tmp/',
   limits: { fileSize: 50 * 1024 * 1024 }, // Optional: limit file size to 50MB
   abortOnLimit: true, // Optional: return 413 when file size is exceeded
-}));
+})); // This is a third-party middleware function in Express. It parses file uploads and is based on express-fileupload.
 
 const  userRouter = require('./routes/user.router')   
 
