@@ -16,6 +16,7 @@ const upload = require('../middlewares/multer.middleware');
 //         }
 //     ]   
 // ), registerUser);    // Route to register a user
+// exluded multer and use fileupload in app.js
 
 router.post('/register',registerUser);    // Route to register a user
 
