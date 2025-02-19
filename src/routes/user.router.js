@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const registerUser = require('../controllers/user.controller');
 const upload = require('../middlewares/multer.middleware');
+const {loginUser,logoutUser} = require('../controllers/login.controller');
+const verifyJWT = require('../middlewares/auth.middleware');
 
 
 // router.post('/register',upload.fields
@@ -18,8 +20,9 @@ const upload = require('../middlewares/multer.middleware');
 // ), registerUser);    // Route to register a user
 // exluded multer and use fileupload in app.js
 
-router.post('/register',registerUser);    // Route to register a user
-
+router.post('/register', registerUser);    // Route to register a user
+router.post('/login', loginUser);    // Route to login a user
+router.post('/logout',verifyJWT, logoutUser);    // Route to logout a user
 
 
 module.exports = router;    // Export the router
