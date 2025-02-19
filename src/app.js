@@ -29,7 +29,7 @@ app.use(fileUpload({
 
 const  userRouter = require('./routes/user.router')   
 
-app.use('/user', userRouter);    // Mount the user router at the /user endpoint
+app.use('/user/api', userRouter);    // Mount the user router at the /user endpoint
 
 
 module.exports = app;    // Export the app
