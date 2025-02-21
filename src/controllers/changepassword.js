@@ -73,5 +73,23 @@ const updateAccountDetails = asynchandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, null, 'Account details updated successfully'));
 });
 
+const changeAvatar = asynchandler(async (req, res) => {
+    const avatarLocalPath = req.files?.avatar ? req.files.avatar.tempFilePath : null;
 
-module.exports = {changePassword, getCurrentUser, updateAccountDetails};
+    if (!avatarLocalPath) {
+        throw new apiError(400, 'Please provide an avatar');
+    }
+
+    const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+    if (!avatar) {
+        throw new apiError(500, 'Failed to upload avatar');
+    }
+
+    const user = await UserSchema.findByIdAndUpdate(req.user._id, { avatar: avatar.url }, { new: true });
+
+    return res.status(200).json(new ApiResponse(200, user, 'Avatar updated successfully'));
+});
+
+
+module.exports = {changePassword, getCurrentUser, updateAccountDetails,};
