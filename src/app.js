@@ -27,7 +27,7 @@ app.use(fileUpload({
   abortOnLimit: true, // Optional: return 413 when file size is exceeded
 })); // This is a third-party middleware function in Express. It parses file uploads and is based on express-fileupload.
 
-const  userRouter = require('./routes/user.router')   
+const  userRouter = require('./routes/user.route')   
 
 app.use('/user/api', userRouter);    // Mount the user router at the /user endpoint
 

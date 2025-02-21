@@ -24,16 +24,16 @@ const loginUser = asynchandler(async (req, res) => {
         throw new apiError(400, 'Please provide all the required details');
     }
 
-    const user = UserSchema.finddOne({
+    const user = await UserSchema.findOne({
         $or: [{ email: email }, { username: username }]
-    })
+    });
     
         if(!user){
             throw new apiError(404, 'User not found');
-        }
+        } 
        
         const isPasswordMatch = await user.isPasswordMatch(password);
-        if(!isPasswordMatch){
+        if (!isPasswordMatch) {
             throw new apiError(400, 'Invalid credentials');
         }
 
