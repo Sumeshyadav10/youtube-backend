@@ -91,5 +91,25 @@ const changeAvatar = asynchandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, user, 'Avatar updated successfully'));
 });
 
+const changeCoverImages = asynchandler(async (req, res) => {
+    const coverImagesLocalPaths = req.files['cover images']?.map(file => file.tempFilePath);
 
-module.exports = {changePassword, getCurrentUser, updateAccountDetails,};
+    if (!coverImagesLocalPaths) {
+        throw new apiError(400, 'Please provide cover images');
+    }
+
+    const coverImages = await Promise.all(coverImagesLocalPaths.map(async (coverImageLocalPath) => {
+        return await uploadOnCloudinary(coverImageLocalPath);
+    }));
+
+    if (!coverImages) {
+        throw new apiError(500, 'Failed to upload cover images');
+    }
+
+    const user = await UserSchema.findByIdAndUpdate(req.user._id, { cover_images: coverImages.map(coverImage => coverImage.url) }, { new: true });
+
+    return res.status(200).json(new ApiResponse(200, user, 'Cover images updated successfully'));
+});
+
+
+module.exports = {changePassword, getCurrentUser, updateAccountDetails, changeAvatar, changeCoverImages};
