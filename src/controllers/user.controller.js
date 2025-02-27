@@ -4,6 +4,7 @@ const apiError = require('../utils/apiError');
 const uploadOnCloudinary = require('../utils/cloudinary');
 const ApiResponse = require('../utils/apiResponse');
 
+
 const registerUser = asynchandler(async (req, res) => { 
     const { username, email, password, fullname } = req.body;
     console.log(req.files);
