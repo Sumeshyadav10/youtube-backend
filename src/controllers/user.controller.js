@@ -54,4 +54,59 @@ const registerUser = asynchandler(async (req, res) => {
     return res.status(201).json(new ApiResponse(201, 'User registered successfully', createdUser));
 });
 
-module.exports = registerUser;
+const AddProfileDetails = asynchandler(async (req, res) => {
+    const {username} = req.params;
+    if(!username){
+        throw new apiError(400, 'Please provide username');
+    }
+   const channel = await User.aggregate([
+    {
+        $match:{
+            username: username
+        }
+    },
+    {
+        $lookup:{
+            from: 'subscriptions',
+            localField: '_id',
+            foreignField: 'channel',
+            as: 'subscribers'
+        }
+    },{
+        $lookup:{
+            from: 'subscriptions',
+            localField: '_id',
+            foreignField: 'subscriber',
+            as: 'subscribedTo'
+    }
+    },{
+        $addFields:{
+            subscriberCount: {$size: '$subscribers'},
+            subscribedToCount: {$size: '$subscribedTo'},
+            isSubscribed: {
+                $in: [req.user?._id, '$subscribers.subscriber'],
+                then: true,
+                else: false
+            }
+        }
+    },{
+        $project:{
+            username:1,
+            fullname:1,
+            avatar:1,
+            coverImage:1,
+            isSubscribed:1,
+            email:1,
+            subscriberCount:1,
+            subscribedToCount:1
+        }
+    }
+   ])
+   if(!channel?.length){
+       throw new apiError(404, 'Channel not found');
+   }
+    return res.status(200).json(new ApiResponse(200, channel[0], 'Channel details'));
+   
+});
+
+module.exports = {registerUser, AddProfileDetails};

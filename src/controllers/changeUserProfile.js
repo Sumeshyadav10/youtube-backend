@@ -11,6 +11,7 @@ const changePassword = asynchandler(async (req, res) => {
     }
 
     const user = await UserSchema.findById(req.user._id);
+    // const user = await UserSchema.findOne({ password: req.body.oldPassword });
 
     if (!user) {
         throw new apiError(404, 'User not found');
