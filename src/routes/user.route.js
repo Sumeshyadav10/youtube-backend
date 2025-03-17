@@ -5,6 +5,7 @@ const { loginUser, logoutUser } = require('../controllers/login.controller');
 const verifyJWT = require('../middlewares/auth.middleware');
 const { refreshToken } = require('../controllers/refreshToken.controller');
 const { changePassword, getCurrentUser, updateAccountDetails, changeAvatar, changeCoverImages } = require('../controllers/changeUserProfile');
+// const {signup} = require('../controllers/authController');
 
 // router.post('/register',upload.fields
 // (
@@ -32,7 +33,7 @@ router.patch('/change-avatar', verifyJWT, upload.single('avatar'), changeAvatar)
 router.patch('/change-cover-images', verifyJWT, upload.array('cover images', 5), changeCoverImages);    // Route to change the cover images using multer
 router.get('/watch-history', verifyJWT, getWatchhistory);    // Route to get the watch history
 router.get('/profile/:username',verifyJWT, AddProfileDetails);    // Route to get profile details
-
+// router.post("/signup", signup);
 // router.route('/register').post(registerUser);    // Route to register a user (used chaining method syntax)
 
 module.exports = router;    // Export the router
